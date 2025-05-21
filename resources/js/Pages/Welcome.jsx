@@ -1,13 +1,23 @@
 import { Head, Link } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function Welcome({ auth }) {
     const handleImageError = () => {
         document.getElementById('screenshot-container')?.classList.add('!hidden');
     };
 
+    const productGridRef1 = useRef(null);
+    const productGridRef2 = useRef(null);
+
+    const scrollProducts = (ref, direction) => {
+        const grid = ref.current;
+        if (grid) {
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            grid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
     useEffect(() => {
-        // Animación de elementos al cargar
         const animateElements = () => {
             const elements = document.querySelectorAll('.animate-on-scroll');
             elements.forEach(el => {
@@ -21,7 +31,7 @@ export default function Welcome({ auth }) {
         };
 
         window.addEventListener('scroll', animateElements);
-        animateElements(); // Ejecutar al cargar para elementos visibles inicialmente
+        animateElements();
 
         return () => window.removeEventListener('scroll', animateElements);
     }, []);
@@ -183,14 +193,30 @@ export default function Welcome({ auth }) {
 
                             {/* Categories and Products */}
                             <div className="mt-6 flex justify-between items-center">
-                                <div className="flex items-center space-x-4">
-                                    <select className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4CAF50]">
-                                        <option>Todas las categorías</option>
-                                        <option>Electrónica</option>
-                                        <option>Moda</option>
-                                        <option>Hogar</option>
-                                    </select>
-                                    <span className="text-lg font-semibold">Destacados</span>
+                                <div className="flex flex-col">
+                                    <div className="relative">
+                                        <select className="appearance-none bg-white border border-gray-300 rounded-full px-6 py-2 pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4CAF50] text-gray-700">
+                                            <option>Todas las categorías</option>
+                                            <option>Electrónica</option>
+                                            <option>Moda</option>
+                                            <option>Hogar</option>
+                                        </select>
+                                        <svg
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M19 9l-7 7-7-7"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <span className="mt-4 text-lg font-semibold">Destacados</span>
                                 </div>
                                 <Link
                                     href={route('register')}
@@ -200,20 +226,127 @@ export default function Welcome({ auth }) {
                                 </Link>
                             </div>
 
-                            {/* Product Grid */}
-                            <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {[...Array(4)].map((_, index) => (
-                                    <div
-                                        key={index}
-                                        className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
-                                    >
-                                        <div className="w-full h-48 bg-gray-200"></div>
-                                        <div className="p-4">
-                                            <p className="text-gray-600">Text</p>
-                                            <p className="text-lg font-semibold">$0</p>
+                            {/* Product Grid 1 */}
+                            <div className="mt-6 relative">
+                                <div
+                                    ref={productGridRef1}
+                                    className="flex overflow-x-auto space-x-4 scrollbar-hide"
+                                    style={{ scrollSnapType: 'x mandatory' }}
+                                >
+                                    {[...Array(8)].map((_, index) => (
+                                        <div
+                                            key={index}
+                                            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 min-w-[200px]"
+                                        >
+                                            <div className="w-full h-48 bg-gray-200"></div>
+                                            <div className="p-4">
+                                                <p className="text-gray-600">Text</p>
+                                                <p className="text-lg font-semibold">$0</p>
+                                            </div>
                                         </div>
+                                    ))}
+                                </div>
+                                <button
+                                    onClick={() => scrollProducts(productGridRef1, 'left')}
+                                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300"
+                                >
+                                    <svg
+                                        className="h-6 w-6 text-gray-600"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M15 19l-7-7 7-7"
+                                        />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => scrollProducts(productGridRef1, 'right')}
+                                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300"
+                                >
+                                    <svg
+                                        className="h-6 w-6 text-gray-600"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M9 5l7 7-7 7"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Product Grid 2 */}
+                            <div className="mt-10">
+                                <span className="text-lg font-semibold">Más Productos</span>
+                                <div className="mt-4 relative">
+                                    <div
+                                        ref={productGridRef2}
+                                        className="flex overflow-x-auto space-x-4 scrollbar-hide"
+                                        style={{ scrollSnapType: 'x mandatory' }}
+                                    >
+                                        {[...Array(8)].map((_, index) => (
+                                            <div
+                                                key={index}
+                                                className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 min-w-[200px]"
+                                            >
+                                                <div className="w-full h-48 bg-gray-200"></div>
+                                                <div className="p-4">
+                                                    <p className="text-gray-600">Text</p>
+                                                    <p className="text-lg font-semibold">$0</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                    <button
+                                        onClick={() => scrollProducts(productGridRef2, 'left')}
+                                        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300"
+                                    >
+                                        <svg
+                                            className="h-6 w-6 text-gray-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M15 19l-7-7 7-7"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onClick={() => scrollProducts(productGridRef2, 'right')}
+                                        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300"
+                                    >
+                                        <svg
+                                            className="h-6 w-6 text-gray-600"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M9 5l7 7-7 7"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </main>
                     </div>
@@ -267,6 +400,15 @@ export default function Welcome({ auth }) {
                         opacity: 1;
                         transform: translateY(0);
                     }
+                }
+
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
                 }
             `}</style>
         </>
