@@ -18,6 +18,10 @@ Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
+Route::middleware(['auth', 'verified'])->get('/Vender', function () {
+    return Inertia::render('Dashboard');
+})->name('dashboard');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
