@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
 import Dropdown from '@/Components/Dropdown';
-export default function Welcome({ auth }) {
+export default function Welcome({ auth , productos = []}) {
     const handleImageError = () => {
         document.getElementById('screenshot-container')?.classList.add('!hidden');
     };
@@ -178,54 +178,7 @@ export default function Welcome({ auth }) {
                         </header>
 
                         <main className="mt-6">
-                            {/* Banner Section */}
-                            <div className="relative bg-red-600 text-white py-6 rounded-lg overflow-hidden">
-                                <div className="absolute inset-0 flex justify-between">
-                                    <div id="screenshot-container" className="flex space-x-4">
-                                        <img
-                                            src=""
-                                            alt="Producto 1"
-                                            className="w-40 h-40 rounded-lg object-cover"
-                                            onError={handleImageError}
-                                        />
-                                        <img
-                                            src=""
-                                            alt="Producto 2"
-                                            className="w-40 h-40 rounded-lg object-cover"
-                                            onError={handleImageError}
-                                        />
-                                    </div>
-                                    <div className="flex space-x-4">
-                                        <img
-                                            src=""
-                                            alt="Producto 3"
-                                            className="w-40 h-40 rounded-lg object-cover"
-                                            onError={handleImageError}
-                                        />
-                                        <img
-                                            src=""
-                                            alt="Producto 4"
-                                            className="w-40 h-40 rounded-lg object-cover"
-                                            onError={handleImageError}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="relative flex flex-col items-center justify-center z-10">
-                                    <h1 className="text-4xl font-bold">BIENVENIDO</h1>
-                                    <p className="mt-2 text-lg bg-black px-4 py-2 rounded-md">COMPRA YA!</p>
-                                </div>
-                                <div className="absolute inset-0 flex justify-center items-center space-x-4">
-                                    {[...Array(5)].map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className="w-10 h-10 bg-yellow-400 rounded-full opacity-50"
-                                            style={{
-                                                transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px)`
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+
 
                             {/* Categories and Products */}
                             <div className="mt-6 flex justify-between items-center">
@@ -255,7 +208,7 @@ export default function Welcome({ auth }) {
                                     <span className="mt-4 text-lg font-semibold">Destacados</span>
                                 </div>
                                 <Link
-                                    href={route('dashboard')}
+                                    href={route('ProductosCreate')}
                                     className="bg-yellow-500 text-white px-6 py-2 rounded-full hover:bg-yellow-600 transition-colors duration-300"
                                 >
                                     Vender ahora
@@ -263,25 +216,40 @@ export default function Welcome({ auth }) {
                             </div>
 
                             {/* Product Grid 1 */}
-                            <div className="mt-6 relative">
-                                <div
-                                    ref={productGridRef1}
-                                    className="flex overflow-x-auto space-x-4 scrollbar-hide"
-                                    style={{ scrollSnapType: 'x mandatory' }}
-                                >
-                                    {[...Array(8)].map((_, index) => (
-                                        <div
-                                            key={index}
-                                            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 min-w-[200px]"
-                                        >
-                                            <div className="w-full h-48 bg-gray-200"></div>
-                                            <div className="p-4">
-                                                <p className="text-gray-600">Text</p>
-                                                <p className="text-lg font-semibold">$0</p>
-                                            </div>
-                                        </div>
-                                    ))}
+<div className="mt-6 relative">
+                <div
+                    ref={productGridRef1}
+                    className="flex overflow-x-auto space-x-4 scrollbar-hide"
+                    style={{ scrollSnapType: 'x mandatory' }}
+                >
+                    {productos.length > 0 ? (
+                        productos.map((producto, index) => (
+                            <Link
+                                key={producto.id}
+                                href={route('ProductoDetalles', { id: producto.id })}
+                                className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 min-w-[200px]"
+                            >
+                                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                    {producto.imagen ? (
+                                        <img
+                                            src={producto.imagen}
+                                            alt={producto.nombre}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    ) : (
+                                        <span className="text-gray-400">Sin imagen</span>
+                                    )}
                                 </div>
+                                <div className="p-4">
+                                    <p className="text-gray-600 truncate">{producto.nombre}</p>
+                                    <p className="text-lg font-semibold">${producto.precio}</p>
+                                </div>
+                            </Link>
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No hay productos disponibles.</p>
+                    )}
+                </div>
                                 <button
                                     onClick={() => scrollProducts(productGridRef1, 'left')}
                                     className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 rounded-full p-2 hover:bg-gray-300"
