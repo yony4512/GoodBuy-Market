@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +15,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/', function () {
+Route::get('/productos', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
@@ -22,6 +23,16 @@ Route::middleware(['auth', 'verified'])->get('/Vender', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
+Route::get('/productos/{id}', [ProductoController::class, 'show'])->name('ProductoDetalles');
+
+// Route::get('/Productodetalles', function () {
+//     return Inertia::render('Producto');
+// })->name('ProductoDetalles');
+
+Route::resource('productos', ProductoController::class);
+Route::get('/CrearProducto', function () {
+    return Inertia::render('CrearProducto');
+})->name('ProductosCreate');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
